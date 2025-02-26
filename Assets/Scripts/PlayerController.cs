@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private InputManager inputManager;
-    [SerializeField] private CinemachineCamera freeLookCamera;
+    [SerializeField] private Transform cameraController;
     [SerializeField] private float speed;
     [SerializeField] private float jumpForce = 5f;
 
@@ -17,16 +17,19 @@ public class PlayerController : MonoBehaviour
     {
         inputManager.OnMove.AddListener(MovePlayer);
         inputManager.OnSpacePressed.AddListener(() => Jump(Vector3.up));
-        inputManager.OnLook.AddListener(RotateCamera);
 
         rb = GetComponent<Rigidbody>();
     }
 
     private void MovePlayer(Vector2 direction)
     {
-        Vector3 moveDirection = new(direction.x, 0f, direction.y);
-        rb.AddForce(speed * moveDirection);
+        Vector3 moveDirection = cameraController.forward * direction.y + cameraController.right * direction.x;
+        moveDirection.y = 0f; // Ensure no vertical movement
+
+        rb.linearVelocity = moveDirection.normalized * speed + new Vector3(0, rb.linearVelocity.y, 0);
     }
+
+
 
     private void Jump(Vector3 direction) {
         if (isGrounded || jumpCounter < 2)
@@ -44,15 +47,6 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
             jumpCounter = 0;
-        }
-    }
-
-    private void RotateCamera(Vector2 lookInput)
-    {
-        if (freeLookCamera != null)
-        {
-            transform.forward = freeLookCamera.transform.forward;
-            transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
         }
     }
 }
