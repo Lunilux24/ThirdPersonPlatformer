@@ -11,5 +11,15 @@ public class CoinTrigger : MonoBehaviour
         isCoinCollected = true;
         OnCoinCollision?.Invoke();
         Debug.Log($"{gameObject.name} has been collected!");
+        DestroyCoin();
+    }
+
+    private void DestroyCoin()
+    {
+        if (transform.parent != null)
+        {
+            Destroy(transform.parent.gameObject);
+        }
+        Destroy(gameObject);
     }
 }
