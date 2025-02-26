@@ -1,8 +1,10 @@
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private InputManager inputManager;
+    [SerializeField] private CinemachineCamera freeLookCamera;
     [SerializeField] private float speed;
     [SerializeField] private float jumpForce = 5f;
 
@@ -15,6 +17,8 @@ public class PlayerController : MonoBehaviour
     {
         inputManager.OnMove.AddListener(MovePlayer);
         inputManager.OnSpacePressed.AddListener(() => Jump(Vector3.up));
+        inputManager.OnLook.AddListener(RotateCamera);
+
         rb = GetComponent<Rigidbody>();
     }
 
@@ -40,6 +44,15 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
             jumpCounter = 0;
+        }
+    }
+
+    private void RotateCamera(Vector2 lookInput)
+    {
+        if (freeLookCamera != null)
+        {
+            transform.forward = freeLookCamera.transform.forward;
+            transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
         }
     }
 }

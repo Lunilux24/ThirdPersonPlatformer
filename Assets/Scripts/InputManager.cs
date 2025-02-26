@@ -7,13 +7,16 @@ public class InputManager : MonoBehaviour
 {
     public UnityEvent<Vector2> OnMove = new UnityEvent<Vector2>();
     public UnityEvent OnSpacePressed = new UnityEvent();
+    public UnityEvent<Vector2> OnLook = new UnityEvent<Vector2>();
     void Update()
     {
+        // Jump
         if (Input.GetKeyDown(KeyCode.Space))
         {
             OnSpacePressed?.Invoke();
         }
 
+        // Movement
         Vector2 input = Vector2.zero;
         if (Input.GetKey(KeyCode.A))
         {
@@ -32,5 +35,9 @@ public class InputManager : MonoBehaviour
             input += Vector2.down;
         }
         OnMove?.Invoke(input);
+
+        // Camera
+        Vector2 lookInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        OnLook?.Invoke(lookInput);
     }
 }
